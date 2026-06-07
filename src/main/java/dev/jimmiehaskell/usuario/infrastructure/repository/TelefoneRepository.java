@@ -1,6 +1,6 @@
 package dev.jimmiehaskell.usuario.infrastructure.repository;
 
-import dev.jimmiehaskell.aprendendospring.infrastructure.entity.Telefone;
+import dev.jimmiehaskell.usuario.infrastructure.entity.Telefone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
