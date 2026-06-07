@@ -6,6 +6,7 @@ import dev.jimmiehaskell.usuario.infrastructure.entity.Usuario;
 import dev.jimmiehaskell.usuario.infrastructure.exceptions.ConflictException;
 import dev.jimmiehaskell.usuario.infrastructure.exceptions.ResourceNotFoundException;
 import dev.jimmiehaskell.usuario.infrastructure.repository.UsuarioRepository;
+import dev.jimmiehaskell.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
     private final UsuarioRepository usuarioRepository;
     private final UsuarioConverter usuarioConverter;
-    private final PasswordEncoder passwordEncoder;
 
     public UsuarioDTO salvaUsuario(UsuarioDTO usuarioDTO) {
         try {
@@ -50,5 +52,14 @@ public class UsuarioService {
 
     public void deletaUsuarioPorEmail(String email) {
         usuarioRepository.deleteByEmail(email);
+    }
+
+    public UsuarioDTO atualizaDadosUsuario(String token, UsuarioDTO dto) {
+        String email = jwtUtil.extractEmailToken(token.substring(7));
+        dto.setSenha(dto.getSenha() != null ? passwordEncoder.encode(dto.getSenha()) : null);
+        Usuario usuarioEntity = usuarioRepository.findByEmail(email).orElseThrow(
+            () -> new ResourceNotFoundException("Email não localizado: " + email));
+        Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
+        return usuarioConverter.fromUsuarioDTO(usuarioRepository.save(usuario));
     }
 }

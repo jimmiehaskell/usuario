@@ -96,4 +96,15 @@ public class UsuarioConverter {
             .build();
     }
 
+    public Usuario updateUsuario(UsuarioDTO usuarioDTO, Usuario entiry) {
+        return Usuario.builder()
+            .id(entiry.getId())
+            .nome(usuarioDTO.getNome() != null ? usuarioDTO.getNome() : entiry.getNome())
+            .senha(usuarioDTO.getSenha() != null ? usuarioDTO.getSenha() : entiry.getSenha())
+            .email(usuarioDTO.getEmail() != null ? usuarioDTO.getEmail() : entiry.getEmail())
+            .enderecos(entiry.getEnderecos())
+            .telefones(entiry.getTelefones())
+            .build();
+    }
+
 }
