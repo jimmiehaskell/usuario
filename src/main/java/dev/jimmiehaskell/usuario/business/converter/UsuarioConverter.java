@@ -9,6 +9,7 @@ import dev.jimmiehaskell.usuario.infrastructure.entity.Usuario;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -19,8 +20,10 @@ public class UsuarioConverter {
             .nome(usuarioDTO.getNome())
             .email(usuarioDTO.getEmail())
             .senha(usuarioDTO.getSenha())
-            .enderecos(fromListaEnderecos(usuarioDTO.getEnderecos()))
-            .telefones(fromListaTelefones(usuarioDTO.getTelefones()))
+            .enderecos(
+                usuarioDTO.getEnderecos() != null ? fromListaEnderecos(usuarioDTO.getEnderecos()) : null)
+            .telefones(
+                usuarioDTO.getTelefones() != null ? fromListaTelefones(usuarioDTO.getTelefones()) : null)
             .build();
     }
 
@@ -67,11 +70,10 @@ public class UsuarioConverter {
     }
 
     public List<EnderecoDTO> fromListaEnderecosDTO(List<Endereco> enderecos) {
-        List<EnderecoDTO> enderecosDTO = new ArrayList<>();
-        for (Endereco endereco : enderecos) {
-            enderecosDTO.add(fromEnderecoDTO(endereco));
+        if (enderecos == null) {
+            return Collections.emptyList();
         }
-        return enderecosDTO;
+        return enderecos.stream().map(this::fromEnderecoDTO).toList();
     }
 
     public EnderecoDTO fromEnderecoDTO(Endereco endereco) {
@@ -87,6 +89,9 @@ public class UsuarioConverter {
     }
 
     public List<TelefoneDTO> fromListaTelefonesDTO(List<Telefone> telefones) {
+        if (telefones == null) {
+            return Collections.emptyList();
+        }
         return telefones.stream().map(this::fromTelefoneDTO).toList();
     }
 
