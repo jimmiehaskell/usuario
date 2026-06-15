@@ -1,10 +1,12 @@
 package dev.jimmiehaskell.usuario.controller;
 
 import dev.jimmiehaskell.usuario.business.UsuarioService;
+import dev.jimmiehaskell.usuario.business.ViaCepService;
 import dev.jimmiehaskell.usuario.business.dto.EnderecoDTO;
 import dev.jimmiehaskell.usuario.business.dto.LoginRequestDTO;
 import dev.jimmiehaskell.usuario.business.dto.TelefoneDTO;
 import dev.jimmiehaskell.usuario.business.dto.UsuarioDTO;
+import dev.jimmiehaskell.usuario.infrastructure.clients.ViaCepDTO;
 import dev.jimmiehaskell.usuario.infrastructure.entity.Usuario;
 import dev.jimmiehaskell.usuario.infrastructure.security.JwtUtil;
 import dev.jimmiehaskell.usuario.infrastructure.security.SecurityConfig;
@@ -20,12 +22,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/usuario")
 @RequiredArgsConstructor
-@Tag(name = "Usuário", description = "")
+@Tag(name = "Usuário", description = "Usuário do sistema")
 @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME)
 public class UsuarioController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UsuarioService usuarioService;
+    private final ViaCepService viaCepService;
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> salvaUsuario(@RequestBody UsuarioDTO usuarioDTO) {
@@ -51,7 +54,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{email}")
-    public ResponseEntity<Void> deletaUsuarioPorEmail(@PathVariable("email") String email) {
+    public ResponseEntity<Void> deletaUsuarioPorEmail(@PathVariable String email) {
         usuarioService.deletaUsuarioPorEmail(email);
         return ResponseEntity.ok().build();
     }
@@ -84,5 +87,10 @@ public class UsuarioController {
     public ResponseEntity<TelefoneDTO> cadastraTelefone(@RequestBody TelefoneDTO dto,
                                                         @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(usuarioService.cadastraTelefone(token, dto));
+    }
+
+    @GetMapping("/endereco/{cep}")
+    public ResponseEntity<ViaCepDTO> buscarDadosCep(@PathVariable String cep) {
+        return ResponseEntity.ok(viaCepService.buscaDadosEndereco(cep));
     }
 }
