@@ -7,16 +7,11 @@ import dev.jimmiehaskell.usuario.business.dto.LoginRequestDTO;
 import dev.jimmiehaskell.usuario.business.dto.TelefoneDTO;
 import dev.jimmiehaskell.usuario.business.dto.UsuarioDTO;
 import dev.jimmiehaskell.usuario.infrastructure.clients.ViaCepDTO;
-import dev.jimmiehaskell.usuario.infrastructure.entity.Usuario;
-import dev.jimmiehaskell.usuario.infrastructure.security.JwtUtil;
 import dev.jimmiehaskell.usuario.infrastructure.security.SecurityConfig;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Usuário", description = "Usuário do sistema")
 @SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME)
 public class UsuarioController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
     private final UsuarioService usuarioService;
     private final ViaCepService viaCepService;
 
@@ -36,16 +29,8 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDTO loginRequestDTO) {
-        System.out.println("Email: " + loginRequestDTO.getEmail());
-        System.out.println("Senha: " + loginRequestDTO.getSenha());
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                loginRequestDTO.getEmail(),
-                loginRequestDTO.getSenha()
-            )
-        );
-        return "Bearer " + jwtUtil.generateToken(authentication.getName());
+    public ResponseEntity<String> login(@RequestBody LoginRequestDTO dto) {
+        return ResponseEntity.ok(usuarioService.autenticarUsuario(dto));
     }
 
     @GetMapping

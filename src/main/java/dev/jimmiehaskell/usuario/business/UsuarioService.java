@@ -2,6 +2,7 @@ package dev.jimmiehaskell.usuario.business;
 
 import dev.jimmiehaskell.usuario.business.converter.UsuarioConverter;
 import dev.jimmiehaskell.usuario.business.dto.EnderecoDTO;
+import dev.jimmiehaskell.usuario.business.dto.LoginRequestDTO;
 import dev.jimmiehaskell.usuario.business.dto.TelefoneDTO;
 import dev.jimmiehaskell.usuario.business.dto.UsuarioDTO;
 import dev.jimmiehaskell.usuario.infrastructure.entity.Endereco;
@@ -9,18 +10,26 @@ import dev.jimmiehaskell.usuario.infrastructure.entity.Telefone;
 import dev.jimmiehaskell.usuario.infrastructure.entity.Usuario;
 import dev.jimmiehaskell.usuario.infrastructure.exceptions.ConflictException;
 import dev.jimmiehaskell.usuario.infrastructure.exceptions.ResourceNotFoundException;
+import dev.jimmiehaskell.usuario.infrastructure.exceptions.UnauthorizedException;
 import dev.jimmiehaskell.usuario.infrastructure.repository.EnderecoRepository;
 import dev.jimmiehaskell.usuario.infrastructure.repository.TelefoneRepository;
 import dev.jimmiehaskell.usuario.infrastructure.repository.UsuarioRepository;
 import dev.jimmiehaskell.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.TE;
+import org.apache.coyote.BadRequestException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
+    private final AuthenticationManager authenticationManager;
     private final EnderecoRepository enderecoRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
@@ -106,5 +115,15 @@ public class UsuarioService {
             () -> new ResourceNotFoundException("Email não localizado: " + email));
         Telefone telefone = usuarioConverter.fromTelefoneEntity(dto, usuario.getId());
         return usuarioConverter.fromTelefoneDTO(telefoneRepository.save(telefone));
+    }
+
+    public String autenticarUsuario(LoginRequestDTO dto) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getSenha()));
+            return "Bearer " + jwtUtil.generateToken(authentication.getName());
+        } catch (BadCredentialsException | AuthorizationDeniedException | UsernameNotFoundException e) {
+            throw new UnauthorizedException("Usuário ou senha inválidos: ", e.getCause());
+        }
     }
 }
