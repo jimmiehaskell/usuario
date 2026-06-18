@@ -1,7 +1,7 @@
 package dev.jimmiehaskell.usuario.business;
 
 import dev.jimmiehaskell.usuario.infrastructure.clients.ViaCepClient;
-import dev.jimmiehaskell.usuario.infrastructure.clients.ViaCepDTO;
+import dev.jimmiehaskell.usuario.infrastructure.clients.dto.ViaCepDTO;
 import dev.jimmiehaskell.usuario.infrastructure.exceptions.IllegalArgumentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

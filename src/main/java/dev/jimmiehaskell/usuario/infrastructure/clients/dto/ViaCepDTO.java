@@ -1,4 +1,4 @@
-package dev.jimmiehaskell.usuario.infrastructure.clients;
+package dev.jimmiehaskell.usuario.infrastructure.clients.dto;
 
 import lombok.*;
 
