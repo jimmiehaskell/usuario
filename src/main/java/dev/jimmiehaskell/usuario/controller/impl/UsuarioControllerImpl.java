@@ -7,7 +7,7 @@ import dev.jimmiehaskell.usuario.business.dto.LoginRequestDTO;
 import dev.jimmiehaskell.usuario.business.dto.TelefoneDTO;
 import dev.jimmiehaskell.usuario.business.dto.UsuarioDTO;
 import dev.jimmiehaskell.usuario.controller.UsuarioController;
-import dev.jimmiehaskell.usuario.infrastructure.clients.ViaCepDTO;
+import dev.jimmiehaskell.usuario.infrastructure.clients.dto.ViaCepDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
