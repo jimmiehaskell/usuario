@@ -4,7 +4,7 @@ import dev.jimmiehaskell.usuario.business.dto.EnderecoDTO;
 import dev.jimmiehaskell.usuario.business.dto.LoginRequestDTO;
 import dev.jimmiehaskell.usuario.business.dto.TelefoneDTO;
 import dev.jimmiehaskell.usuario.business.dto.UsuarioDTO;
-import dev.jimmiehaskell.usuario.infrastructure.clients.ViaCepDTO;
+import dev.jimmiehaskell.usuario.infrastructure.clients.dto.ViaCepDTO;
 import dev.jimmiehaskell.usuario.infrastructure.security.SecurityConfig;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
